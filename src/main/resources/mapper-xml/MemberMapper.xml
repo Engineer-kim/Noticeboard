@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper  namespace="com.web.mapper.MemberMapper">
+	<insert id="registerBoard">
+	    INSERT INTO 
+	    			tb_register
+	    			(  
+	    						 userid ,
+	   					         userpwd ,
+	   					         username 	
+	   					        )
+	                 	 VALUES
+	                 	 (   
+	                   			#{userid} , 
+	                   			#{userpwd}, 
+	                  			#{username}
+	                  			)
+</insert>
+<select id = "login" >
+	select 
+	  userid, username
+	from 				
+		tb_register
+	where 
+		userid = #{userid},
+		userpwd =#{userpwd)
+				
+				
+				
+</select> 
+</mapper>
+

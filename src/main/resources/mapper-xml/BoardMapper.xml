@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+http://localhost:8080/web/board
+
+CREATE TABLE `tb_reply` (
+  `idx` INT NOT NULL AUTO_INCREMENT,
+  `board_idx` INT,
+  `reply_idx` INT,
+  `contents` TEXT NULL,
+  PRIMARY KEY (`idx`));
+
+CREATE TABLE `tb_board` (
+  `idx` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NULL,
+  `contents` TEXT NULL,
+  `image` VARCHAR(255) NULL,
+  PRIMARY KEY (`idx`));
+ -->
+<mapper namespace="com.web.mapper.BoardMapper">
+    <insert id="addBoard">
+		INSERT INTO 
+	    	tb_board
+	   			(
+					title,
+					image,
+					contents
+				)
+	    	VALUES
+	   			(
+	   				#{title},
+	   				#{image},
+	   				#{contents}
+				)
+    </insert>
+    <delete id="deleteBoard" parameterType="int">
+    			
+    		DELETE 
+    			FROM tb_board 
+    		WHERE idx = #{idx}
+    </delete>
+	<select id="getBoard" resultType="com.web.domain.Board">
+		SELECT
+			idx, title, contents ,image       
+		FROM
+			tb_board
+		ORDER BY idx asc
+	</select>
+	<select id="getBoardOne" resultType="com.web.domain.Board">
+		SELECT
+			idx, title, image, contents
+		FROM									 <!--새로 고침에도 같은 소스 -->
+			tb_board
+		WHERE
+			idx = #{idx}
+	</select>
+    <insert id="addReply">
+		INSERT INTO 
+	    	tb_reply
+	   			(
+					board_idx,
+					reply_idx,
+					contents
+				)
+	    	VALUES
+	   			(
+	   				#{boardIdx},
+	   				#{replyIdx},
+	   				#{contents}
+				)
+    </insert>
+	<select id="getReply" resultType="com.web.domain.Reply">
+		SELECT
+			idx, board_idx as boardIdx, reply_idx as replyIdx, contents
+		FROM
+			tb_reply
+		WHERE
+			board_idx = #{boardIdx}
+		order by reply_idx asc
+	</select>
+	
+    
+ <update id="modifyBoard">
+ 
+		UPDATE tb_board
+		SET
+			title =  #{title},
+			contents = #{contents}
+						
+		WHERE
+			idx = #{idx}
+			
+			
+	</update>
+	<select id="list" resultType="com.web.domain.Board">
+		SELECT
+			idx, title, contents,image       
+		FROM
+			tb_board
+		
+		
+
+		
+	</select>
+	
+   <!-- 게시물 목록(페이징) -->
+  
+	<select id ="count" resultType ="int">
+			select count(idx) from tb_board  <!-- 게시물 총 갯수를 구할 쿼리 -->
+	
+	</select>	
+	
+ <!-- 게시물 목록 + 페이징 -->
+	<select id="listPage" resultType="com.web.domain.Board">
+ 		SELECT
+  			idx, title, contents ,image 
+ 		FROM 
+ 			tb_board
+ 		ORDER BY 
+ 			idx desc
+  	  LIMIT #{displayPost}, #{postNum}
+		</select>
+	<!-- 게시물 조회 -->
+		<select id="listPageSearch" parameterType="hashMap" resultType="com.web.domain.Board">
+ 			select
+  				idx, title, contents
+ 			from tb_board
+ 
+			 <if test='searchType.equals("title")'>
+  				WHERE title LIKE concat('%', #{keyword}, '%')
+			 </if>
+ 
+ 			<if test='searchType.equals("content")'>
+ 				 WHERE contents LIKE concat('%', #{keyword}, '%')
+ 			</if>
+ 			
+ 			ORDER BY 
+ 					idx desc
+ 					  LIMIT #{displayPost}, #{postNum}  <!-- 페이징이 뜨기위함 없으면 데이터 전체가 무지성으로 출력됨 -->
+		</select>
+	
+	
+	
+</mapper>
